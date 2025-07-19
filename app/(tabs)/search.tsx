@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { searchDocuments } from '@/services/api';
-import { isImage, isPdf } from '@/utils/utils';
+import { formatToDDMMYYYY, isImage, isPdf } from '@/utils/utils';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as FileSystem from 'expo-file-system';
@@ -55,8 +55,8 @@ export default function SearchScreen() {
             const searchData = {
                 major_head: majorHead,
                 minor_head: minorHead,
-                from_date: fromDate.toISOString().split('T')[0],
-                to_date: toDate.toISOString().split('T')[0],
+                from_date: formatToDDMMYYYY(fromDate),
+                to_date: formatToDDMMYYYY(toDate),
                 tags: tags,
                 uploaded_by: '',
                 start: 0,
