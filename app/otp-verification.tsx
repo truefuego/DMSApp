@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/AuthContext';
 import { validateOTP } from '@/services/api';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -8,6 +9,7 @@ export default function OTPVerificationScreen() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { mobileNumber } = useLocalSearchParams();
+  const { login } = useAuth();
 
   const handleVerifyOTP = async () => {
     if (!otp || otp.length !== 6) {
@@ -20,6 +22,7 @@ export default function OTPVerificationScreen() {
       const response = await validateOTP(mobileNumber as string, otp);
       console.log(JSON.stringify(response));
       if (response.status) {
+        await login(response.data.token);
         router.replace('/(tabs)');
       } else {
         Alert.alert('Error', response.message || 'Invalid OTP');
