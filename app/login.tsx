@@ -1,11 +1,37 @@
+import { generateOTP } from '@/services/api';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
-  const [mobileNumber, setMobileNumber] = useState('');
+  const [mobileNumber, setMobileNumber] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
 
   const handleSendOTP = async () => {
+    if (!mobileNumber || mobileNumber.length !== 10) {
+      Alert.alert('Error', 'Please enter a valid 10-digit mobile number');
+      return;
+    }
 
+    setLoading(true);
+    try {
+      const response = await generateOTP(mobileNumber);
+      console.log(JSON.stringify(response));
+      if (response.status) {
+        router.push({
+          pathname: '/otp-verification',
+          params: { mobileNumber }
+        });
+      } else {
+        Alert.alert('Error', response.message || 'Failed to send OTP');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send OTP. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,7 +57,7 @@ export default function LoginScreen() {
           onPress={handleSendOTP}
         >
           <Text style={styles.buttonText}>
-            Send OTP
+            {loading ? 'Sending OTP...' : 'Send OTP'}
           </Text>
         </TouchableOpacity>
       </View>
