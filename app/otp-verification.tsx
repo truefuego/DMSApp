@@ -22,7 +22,7 @@ export default function OTPVerificationScreen() {
       const response = await validateOTP(mobileNumber as string, otp);
       console.log(JSON.stringify(response));
       if (response.status) {
-        await login(response.data.token);
+        await login(response.data.token, response.data.user_name);
         router.replace('/(tabs)');
       } else {
         Alert.alert('Error', response.message || 'Invalid OTP');

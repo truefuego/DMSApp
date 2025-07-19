@@ -4,7 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 interface AuthContextType {
     isAuthenticated: boolean;
     token: string | null;
-    login: (token: string) => void;
+    userName: string | null;
+    login: (token: string, user_name: string) => void;
     logout: () => void;
     loading: boolean;
 }
@@ -12,9 +13,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [userName, setUserName] = useState<string | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         checkAuthStatus();
@@ -34,10 +36,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const login = async (authToken: string) => {
+    const login = async (authToken: string, user_name: string) => {
         try {
             await AsyncStorage.setItem('authToken', authToken);
             setToken(authToken);
+            setUserName(user_name);
             setIsAuthenticated(true);
         } catch (error) {
             console.error('Error storing auth token:', error);
@@ -48,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             await AsyncStorage.removeItem('authToken');
             setToken(null);
+            setUserName(null);
             setIsAuthenticated(false);
         } catch (error) {
             console.error('Error removing auth token:', error);
@@ -58,6 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         <AuthContext.Provider value={{
             isAuthenticated,
             token,
+            userName,
             login,
             logout,
             loading
