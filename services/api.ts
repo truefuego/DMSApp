@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_BASE_URL || '';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://apis.allsoft.co/api/documentManagement';
 
 export const generateOTP = async (mobile_number: string) => {
     try {
@@ -100,3 +100,34 @@ export const getDocumentTags = async (term: string, token: string) => {
         throw new Error('Failed to get document tags');
     }
 };
+
+export const searchDocuments = async (searchData: any, token: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/searchDocumentEntry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token,
+        },
+        body: JSON.stringify(searchData),
+      });
+      
+      const responseText = await response.text();
+      console.log('Search Response:', responseText);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      try {
+        return JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON Parse Error:', parseError);
+        throw new Error('Invalid response format from server');
+      }
+    } catch (error) {
+      console.error('Search Error:', error);
+      throw new Error('Failed to search documents');
+    }
+  };
+  
