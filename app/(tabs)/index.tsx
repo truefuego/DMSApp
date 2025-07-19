@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
-import { Download, FileText, Search, Upload } from 'lucide-react-native';
+import { Search, Upload } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -51,17 +51,6 @@ export default function HomeScreen() {
                     <Text style={styles.actionTitle}>Search Documents</Text>
                     <Text style={styles.actionSubtitle}>Find your documents</Text>
                 </TouchableOpacity>
-            </View>
-
-            <View style={styles.features}>
-                <View style={styles.featureItem}>
-                    <FileText size={24} color="#6b7280" />
-                    <Text style={styles.featureText}>Support for Images & PDFs</Text>
-                </View>
-                <View style={styles.featureItem}>
-                    <Download size={24} color="#6b7280" />
-                    <Text style={styles.featureText}>Easy Download & Preview</Text>
-                </View>
             </View>
         </ScrollView>
     );

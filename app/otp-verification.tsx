@@ -20,9 +20,8 @@ export default function OTPVerificationScreen() {
     setLoading(true);
     try {
       const response = await validateOTP(mobileNumber as string, otp);
-      console.log(JSON.stringify(response));
       if (response.status) {
-        await login(response.data.token, response.data.user_name);
+        await login(response.data.token, response.data.user_name, response.data.user_id);
         router.replace('/(tabs)');
       } else {
         Alert.alert('Error', response.message || 'Invalid OTP');
