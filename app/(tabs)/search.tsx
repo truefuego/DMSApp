@@ -8,7 +8,7 @@ import * as Sharing from 'expo-sharing';
 import * as WebBrowser from 'expo-web-browser';
 import { Calendar, Download, Eye, Search } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Alert, FlatList, Image, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface DocumentItem {
     document_id: number;
@@ -141,154 +141,163 @@ export default function SearchScreen() {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Search Documents</Text>
-            </View>
-
-            <View style={styles.searchForm}>
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Category</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={majorHead}
-                            onValueChange={(itemValue) => {
-                                setMajorHead(itemValue);
-                                setMinorHead('');
-                            }}
-                        >
-                            <Picker.Item label="All Categories" value="" />
-                            <Picker.Item label="Personal" value="Personal" />
-                            <Picker.Item label="Professional" value="Professional" />
-                        </Picker>
-                    </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // 'padding' is best for iOS, 'height' is safe for Android
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // adjust if you have a header
+        >
+            <ScrollView 
+                style={styles.container}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
+            >
+                <View style={styles.header}>
+                    <Text style={styles.title}>Search Documents</Text>
                 </View>
 
-                {majorHead && (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Sub-Category</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={minorHead}
-                            onValueChange={(itemValue) => setMinorHead(itemValue)}
-                        >
-                            <Picker.Item label="All Sub-Categories" value="" />
-                            {(majorHead === 'Personal' ? personalOptions : professionalOptions).map((option) => (
-                                <Picker.Item key={option} label={option} value={option} />
-                            ))}
-                        </Picker>
+                <View style={styles.searchForm}>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Category</Text>
+                        <View style={styles.pickerContainer}>
+                            <Picker
+                                selectedValue={majorHead}
+                                onValueChange={(itemValue) => {
+                                    setMajorHead(itemValue);
+                                    setMinorHead('');
+                                }}
+                            >
+                                <Picker.Item label="All Categories" value="" />
+                                <Picker.Item label="Personal" value="Personal" />
+                                <Picker.Item label="Professional" value="Professional" />
+                            </Picker>
+                        </View>
                     </View>
-                </View>)}
 
-                    {/* Date Range */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Date Range</Text>
-                    <View style={styles.dateContainer}>
-                        <TouchableOpacity 
-                            style={styles.dateButton}
-                            onPress={() => setShowFromDatePicker(true)}
-                        >
-                            <Calendar size={16} color="#6b7280" />
-                            <Text style={styles.dateText}>From: {fromDate.toDateString()}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            style={styles.dateButton}
-                            onPress={() => setShowToDatePicker(true)}
-                        >
-                            <Calendar size={16} color="#6b7280" />
-                            <Text style={styles.dateText}>To: {toDate.toDateString()}</Text>
-                        </TouchableOpacity>
+                    {majorHead && (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Sub-Category</Text>
+                        <View style={styles.pickerContainer}>
+                            <Picker
+                                selectedValue={minorHead}
+                                onValueChange={(itemValue) => setMinorHead(itemValue)}
+                            >
+                                <Picker.Item label="All Sub-Categories" value="" />
+                                {(majorHead === 'Personal' ? personalOptions : professionalOptions).map((option) => (
+                                    <Picker.Item key={option} label={option} value={option} />
+                                ))}
+                            </Picker>
+                        </View>
+                    </View>)}
+
+                        {/* Date Range */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Date Range</Text>
+                        <View style={styles.dateContainer}>
+                            <TouchableOpacity 
+                                style={styles.dateButton}
+                                onPress={() => setShowFromDatePicker(true)}
+                            >
+                                <Calendar size={16} color="#6b7280" />
+                                <Text style={styles.dateText}>From: {fromDate.toDateString()}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={styles.dateButton}
+                                onPress={() => setShowToDatePicker(true)}
+                            >
+                                <Calendar size={16} color="#6b7280" />
+                                <Text style={styles.dateText}>To: {toDate.toDateString()}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        
+                        {showFromDatePicker && (
+                            <DateTimePicker
+                                value={fromDate}
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                    setShowFromDatePicker(false);
+                                    if (selectedDate) {
+                                    setFromDate(selectedDate);
+                                    }
+                                }}
+                            />
+                        )}
+                        
+                        {showToDatePicker && (
+                            <DateTimePicker
+                                value={toDate}
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                    setShowToDatePicker(false);
+                                    if (selectedDate) {
+                                    setToDate(selectedDate);
+                                    }
+                                }}
+                            />
+                        )}
                     </View>
-                    
-                    {showFromDatePicker && (
-                        <DateTimePicker
-                            value={fromDate}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowFromDatePicker(false);
-                                if (selectedDate) {
-                                setFromDate(selectedDate);
-                                }
-                            }}
+
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Tags</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter tags separated by commas"
+                            value={tagsInput}
+                            onChangeText={setTagsInput}
                         />
-                    )}
-                    
-                    {showToDatePicker && (
-                        <DateTimePicker
-                            value={toDate}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowToDatePicker(false);
-                                if (selectedDate) {
-                                setToDate(selectedDate);
-                                }
-                            }}
-                        />
-                    )}
-                </View>
+                    </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Tags</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter tags separated by commas"
-                        value={tagsInput}
-                        onChangeText={setTagsInput}
-                    />
-                </View>
-
-                <TouchableOpacity
-                    style={[styles.searchButton, loading && styles.searchButtonDisabled]}
-                    onPress={handleSearch}
-                    disabled={loading}
-                >
-                    <Search size={20} color="#ffffff" />
-                    <Text style={styles.searchButtonText}>
-                        {loading ? 'Searching...' : 'Search Documents'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            {searchResults.length > 0 && (
-                <View style={styles.resultsContainer}>
-                    <Text style={styles.resultsTitle}>Search Results ({searchResults.length})</Text>
-                    <FlatList
-                        data={searchResults}
-                        renderItem={renderDocument}
-                        keyExtractor={item => String(item?.document_id)}
-                        scrollEnabled={true}
-                    />
-                </View>
-            )}
-
-            {imageModalVisible && (
-                <Modal
-                    visible={imageModalVisible}
-                    transparent
-                    onRequestClose={() => setImageModalVisible(false)}
-                >
                     <TouchableOpacity
-                        style={{
-                            flex: 1,
-                            backgroundColor: 'rgba(0,0,0,0.95)',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                        onPress={() => setImageModalVisible(false)}
-                        activeOpacity={1}
+                        style={[styles.searchButton, loading && styles.searchButtonDisabled]}
+                        onPress={handleSearch}
+                        disabled={loading}
                     >
-                        <Image
-                            source={{ uri: previewImageUrl }}
-                            style={{ width: '90%', height: '70%', resizeMode: 'contain' }}
-                        />
-                        <Text style={{ color: '#fff', marginTop: 16 }}>Tap anywhere to close</Text>
+                        <Search size={20} color="#ffffff" />
+                        <Text style={styles.searchButtonText}>
+                            {loading ? 'Searching...' : 'Search Documents'}
+                        </Text>
                     </TouchableOpacity>
-                </Modal>
-            )}
+                </View>
 
-        </ScrollView>
+                {searchResults.length > 0 && (
+                    <View style={styles.resultsContainer}>
+                        <Text style={styles.resultsTitle}>Search Results ({searchResults.length})</Text>
+                        <FlatList
+                            data={searchResults}
+                            renderItem={renderDocument}
+                            keyExtractor={item => String(item?.document_id)}
+                            scrollEnabled={true}
+                        />
+                    </View>
+                )}
+
+                {imageModalVisible && (
+                    <Modal
+                        visible={imageModalVisible}
+                        transparent
+                        onRequestClose={() => setImageModalVisible(false)}
+                    >
+                        <TouchableOpacity
+                            style={{
+                                flex: 1,
+                                backgroundColor: 'rgba(0,0,0,0.95)',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                            onPress={() => setImageModalVisible(false)}
+                            activeOpacity={1}
+                        >
+                            <Image
+                                source={{ uri: previewImageUrl }}
+                                style={{ width: '90%', height: '70%', resizeMode: 'contain' }}
+                            />
+                            <Text style={{ color: '#fff', marginTop: 16 }}>Tap anywhere to close</Text>
+                        </TouchableOpacity>
+                    </Modal>
+                )}
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 

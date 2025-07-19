@@ -7,7 +7,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { Calendar, Camera, FileText, Tag } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function UploadScreen() {
     const { token, user } = useAuth();
@@ -148,159 +148,169 @@ export default function UploadScreen() {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Upload Document</Text>
-            </View>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // 'padding' is best for iOS, 'height' is safe for Android
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // adjust if you have a header
+        >
+            <ScrollView 
+                style={styles.container}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps="handled"
+            >
+                <View style={styles.header}>
+                    <Text style={styles.title}>Upload Document</Text>
+                </View>
 
-            <View style={styles.form}>
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Select File</Text>
-                    <View style={styles.fileButtons}>
-                        <TouchableOpacity style={styles.fileButton} onPress={pickDocument}>
-                            <FileText size={24} color="#3b82f6" />
-                            <Text style={styles.fileButtonText}>Choose File</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.fileButton} onPress={takePhoto}>
-                            <Camera size={24} color="#10b981" />
-                            <Text style={styles.fileButtonText}>Take Photo</Text>
-                        </TouchableOpacity>
+                <View style={styles.form}>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Select File</Text>
+                        <View style={styles.fileButtons}>
+                            <TouchableOpacity style={styles.fileButton} onPress={pickDocument}>
+                                <FileText size={24} color="#3b82f6" />
+                                <Text style={styles.fileButtonText}>Choose File</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.fileButton} onPress={takePhoto}>
+                                <Camera size={24} color="#10b981" />
+                                <Text style={styles.fileButtonText}>Take Photo</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {selectedFile && (
+                            <Text style={styles.selectedFile}>Selected: {selectedFile.name}</Text>
+                        )}
                     </View>
-                    {selectedFile && (
-                        <Text style={styles.selectedFile}>Selected: {selectedFile.name}</Text>
-                    )}
-                </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Document Date</Text>
-                    <TouchableOpacity 
-                        style={styles.dateButton}
-                        onPress={() => setShowDatePicker(true)}
-                    >
-                        <Calendar size={20} color="#6b7280" />
-                        <Text style={styles.dateText}>{documentDate.toDateString()}</Text>
-                    </TouchableOpacity>
-                    {showDatePicker && (
-                        <DateTimePicker
-                            value={documentDate}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowDatePicker(false);
-                                if (selectedDate) {
-                                    setDocumentDate(selectedDate);
-                                }
-                            }}
-                        />
-                    )}
-                </View>
-
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Category</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={majorHead}
-                            onValueChange={(itemValue) => {
-                                setMajorHead(itemValue);
-                                setMinorHead('');
-                            }}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Document Date</Text>
+                        <TouchableOpacity 
+                            style={styles.dateButton}
+                            onPress={() => setShowDatePicker(true)}
                         >
-                            <Picker.Item label="Select Category" value="" />
-                            <Picker.Item label="Personal" value="Personal" />
-                            <Picker.Item label="Professional" value="Professional" />
-                        </Picker>
+                            <Calendar size={20} color="#6b7280" />
+                            <Text style={styles.dateText}>{documentDate.toDateString()}</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={documentDate}
+                                mode="date"
+                                display="default"
+                                onChange={(event, selectedDate) => {
+                                    setShowDatePicker(false);
+                                    if (selectedDate) {
+                                        setDocumentDate(selectedDate);
+                                    }
+                                }}
+                            />
+                        )}
                     </View>
-                </View>
 
-                {majorHead && (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Sub-Category</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            selectedValue={minorHead}
-                            onValueChange={(itemValue) => setMinorHead(itemValue)}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Category</Text>
+                        <View style={styles.pickerContainer}>
+                            <Picker
+                                selectedValue={majorHead}
+                                onValueChange={(itemValue) => {
+                                    setMajorHead(itemValue);
+                                    setMinorHead('');
+                                }}
+                            >
+                                <Picker.Item label="Select Category" value="" />
+                                <Picker.Item label="Personal" value="Personal" />
+                                <Picker.Item label="Professional" value="Professional" />
+                            </Picker>
+                        </View>
+                    </View>
+
+                    {majorHead && (
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Sub-Category</Text>
+                        <View style={styles.pickerContainer}>
+                            <Picker
+                                selectedValue={minorHead}
+                                onValueChange={(itemValue) => setMinorHead(itemValue)}
+                            >
+                                <Picker.Item label="Select Sub-Category" value="" />
+                                {(majorHead === 'Personal' ? personalOptions : professionalOptions).map((option) => (
+                                    <Picker.Item key={option} label={option} value={option} />
+                                ))}
+                            </Picker>
+                        </View>
+                    </View>
+                    )}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Tags</Text>
+
+                        <View style={styles.tagInputContainer}>
+                            <TextInput
+                                style={styles.tagInput}
+                                placeholder="Add tag"
+                                value={newTag}
+                                onChangeText={setNewTag}
+                                onSubmitEditing={addTag}
+                            />
+                            <TouchableOpacity style={styles.addTagButton} onPress={addTag}>
+                                <Tag size={16} color="#ffffff" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={{ marginTop: 8, marginBottom: 8 }}
                         >
-                            <Picker.Item label="Select Sub-Category" value="" />
-                            {(majorHead === 'Personal' ? personalOptions : professionalOptions).map((option) => (
-                                <Picker.Item key={option} label={option} value={option} />
+                            {availableTags
+                                .filter(tag => !tags.includes(tag))
+                                .map((tag, idx) => (
+                                    <TouchableOpacity
+                                        key={tag + '-' + idx}
+                                        style={styles.availableTag}
+                                        onPress={() => {
+                                            setTags([...tags, tag]);
+                                        }}
+                                    >
+                                        <Text style={styles.availableTagText}>+ {tag}</Text>
+                                    </TouchableOpacity>
                             ))}
-                        </Picker>
+                        </ScrollView>
+                        <View style={styles.tagsContainer}>
+                            {tags.map((tag, index) => (
+                            <TouchableOpacity
+                                key={tag + '-' + index}
+                                style={styles.tag}
+                                onPress={() => removeTag(tag)}
+                            >
+                                <Text style={styles.tagText}>{tag}</Text>
+                                <Text style={styles.tagRemove}>×</Text>
+                            </TouchableOpacity>
+                            ))}
+                        </View>
                     </View>
-                </View>
-                )}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Tags</Text>
 
-                    <View style={styles.tagInputContainer}>
+
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Remarks</Text>
                         <TextInput
-                            style={styles.tagInput}
-                            placeholder="Add tag"
-                            value={newTag}
-                            onChangeText={setNewTag}
-                            onSubmitEditing={addTag}
+                            style={styles.textArea}
+                            placeholder="Enter remarks..."
+                            value={remarks}
+                            onChangeText={setRemarks}
+                            multiline
+                            numberOfLines={4}
                         />
-                        <TouchableOpacity style={styles.addTagButton} onPress={addTag}>
-                            <Tag size={16} color="#ffffff" />
-                        </TouchableOpacity>
                     </View>
 
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={{ marginTop: 8, marginBottom: 8 }}
+                    <TouchableOpacity
+                        style={[styles.uploadButton, loading && styles.uploadButtonDisabled]}
+                        onPress={handleUpload}
+                        disabled={loading}
                     >
-                        {availableTags
-                            .filter(tag => !tags.includes(tag))
-                            .map((tag, idx) => (
-                                <TouchableOpacity
-                                    key={tag + '-' + idx}
-                                    style={styles.availableTag}
-                                    onPress={() => {
-                                        setTags([...tags, tag]);
-                                    }}
-                                >
-                                    <Text style={styles.availableTagText}>+ {tag}</Text>
-                                </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                    <View style={styles.tagsContainer}>
-                        {tags.map((tag, index) => (
-                        <TouchableOpacity
-                            key={tag + '-' + index}
-                            style={styles.tag}
-                            onPress={() => removeTag(tag)}
-                        >
-                            <Text style={styles.tagText}>{tag}</Text>
-                            <Text style={styles.tagRemove}>×</Text>
-                        </TouchableOpacity>
-                        ))}
-                    </View>
+                        <Text style={styles.uploadButtonText}>
+                            {loading ? 'Uploading...' : 'Upload Document'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Remarks</Text>
-                    <TextInput
-                        style={styles.textArea}
-                        placeholder="Enter remarks..."
-                        value={remarks}
-                        onChangeText={setRemarks}
-                        multiline
-                        numberOfLines={4}
-                    />
-                </View>
-
-                <TouchableOpacity
-                    style={[styles.uploadButton, loading && styles.uploadButtonDisabled]}
-                    onPress={handleUpload}
-                    disabled={loading}
-                >
-                    <Text style={styles.uploadButtonText}>
-                        {loading ? 'Uploading...' : 'Upload Document'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
