@@ -5,7 +5,7 @@ import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ProfileScreen() {
-    const { logout, userName } = useAuth();
+    const { logout, user } = useAuth();
     const router = useRouter();
 
     const handleLogout = () => {
@@ -36,7 +36,7 @@ export default function ProfileScreen() {
                 <View style={styles.profileIcon}>
                     <User size={48} color="#3b82f6" />
                 </View>
-                <Text style={styles.profileName}>{userName}</Text>
+                <Text style={styles.profileName}>{user.user_name}</Text>
             </View>
 
             <View style={styles.menuSection}>

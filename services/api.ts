@@ -42,4 +42,61 @@ export const validateOTP = async (mobile_number: string, otp: string) => {
         console.error('Validate OTP Error:', error);
         throw new Error('Failed to validate OTP');
     }
-  };
+};
+
+export const uploadDocument = async (formData: FormData, token: string) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/saveDocumentEntry`, {
+            method: 'POST',
+            headers: {
+                'token': token,
+            },
+            body: formData,
+        });
+
+        const responseText = await response.text();
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        try {
+            return JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON Parse Error:', parseError);
+            throw new Error('Invalid response format from server');
+        }
+    } catch (error) {
+        console.error('Upload Error:', error);
+        throw new Error('Failed to upload document');
+    }
+};
+  
+export const getDocumentTags = async (term: string, token: string) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/documentTags`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': token,
+            },
+            body: JSON.stringify({ term }),
+        });
+        
+        const responseText = await response.text();
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        try {
+            return JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON Parse Error:', parseError);
+            throw new Error('Invalid response format from server');
+        }
+    } catch (error) {
+        console.error('Tags Error:', error);
+        throw new Error('Failed to get document tags');
+    }
+};

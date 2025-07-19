@@ -18,7 +18,6 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const response = await generateOTP(mobileNumber);
-      console.log(JSON.stringify(response));
       if (response.status) {
         router.push({
           pathname: '/otp-verification',
