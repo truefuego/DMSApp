@@ -22,6 +22,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="login" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="otp-verification" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
