@@ -1,50 +1,127 @@
-# Welcome to your Expo app 👋
+React Native Assignment: Document Management System Interface
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Develop a mobile application using React Native that allows users to manage documents effectively. The app should enable users to upload, tag, search, preview, and download documents seamlessly. While the backend is built with .NET and MySQL, your primary focus will be on the frontend implementation.
 
-## Get started
+=========================
+ASSIGNMENT REQUIREMENTS
+=========================
 
-1. Install dependencies
+1. Project Setup
 
-   ```bash
-   npm install
-   ```
+  1.1. Initialize a New React Native Project
+    - Use `npx react-native init DMSApp` to create a new project.
+    - Set up a GitHub repository and provide the URL at the beginning of your assignment.
 
-2. Start the app
+  1.2. Configure Project Structure
+    - Implement navigation using @react-navigation/native.
+    - Organize your project into components, screens, and services directories.
 
-   ```bash
-   npx expo start
-   ```
+2. Login
 
-In the output, you'll find options to open the app in a
+  2.1. OTP-Based Login
+    - Implement a login screen for mobile number entry.
+    - Upon submission, an OTP is sent to the user’s mobile.
+    - Provide interface to enter OTP.
+    - On success, store token for authenticated requests.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3. File Upload
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+  3.1. File Upload Component
+    - Date Picker for document date.
+    - Dropdown for 'Personal'/'Professional' (major_head).
+    - Dynamic sub-category dropdown:
+      * If 'Personal': John, Tom, Emily, etc.
+      * If 'Professional': Accounts, HR, IT, Finance, etc.
+    - Tag input as tokens/chips.
+      * Fetch tags from endpoint.
+      * Allow new tag addition; save automatically.
+    - Remarks field.
+    - Restrict files to images and PDFs (upload/take picture option).
 
-## Get a fresh project
+4. File Search
 
-When you're ready, run:
+  4.1. Search Component
+    - Dropdowns for categories.
+    - Input for tags.
+    - From & To date pickers for search range.
 
-```bash
-npm run reset-project
-```
+5. File Preview and Download
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+  5.1. Display Search Results
+    - List results with options:
+      * Preview:
+        - Image/PDF: show preview in app.
+        - Others: show 'Preview not available.'
+      * Download:
+        - Download individual file.
+        - Download all as ZIP (BONUS).
 
-## Learn more
+Additional Instructions
+  - Use State Management (Context API or Redux).
+  - Responsive design for different device sizes.
+  - CLEAR README: document setup, instructions, run/test, overview.
+  - Use incremental git commits with meaningful messages.
+  - Follow the Postman Collection for API endpoints.
 
-To learn more about developing your project with Expo, look at the following resources:
+=========================
+README / PROJECT SUMMARY
+=========================
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# React Native Document Management System
 
-## Join the community
+This is a mobile Document Management System app built with React Native.
 
-Join our community of developers creating universal apps.
+## Features
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **OTP-based Login:** Users authenticate via mobile and OTP.
+- **File Upload:** Upload image/PDF from gallery or camera. Select date, category, sub-category, add tags (fetched/new), remarks.
+- **Search:** Filter documents by category, sub-category, date, and tags.
+- **Preview:** In-app preview for images and PDFs, with messaging for unsupported formats.
+- **Download:** Download or share documents using device-native dialogs.
+
+## Project Structure
+
+/DMSApp
+/components
+/screens
+/services
+/context
+/utils
+App.js
+
+- Navigation: @react-navigation/native
+- State: Context API
+- Style: Custom React Native styles, responsive layouts
+
+## Setup & Running
+
+1. Clone
+2. git clone [YOUR_GITHUB_URL]
+cd DMSApp
+2. Install
+3. Start
+   npm start
+4. Run on device (Expo Go or emulator)
+
+## Usage
+
+- **Login:** Enter a registered mobile, receive OTP, verify.
+- **Upload:** Tap 'Choose File'/'Take Photo', fill metadata, add/select tags, remarks, and upload.
+- **Search:** Apply filters and view file list. Preview or download any document.
+  
+## Assignment Completion Status
+
+| Feature         | Status     |
+|-----------------|------------|
+| OTP Login       | ✅          |
+| Upload Img/PDF  | ✅          |
+| Dynamic Dropdown| ✅          |
+| Tag Input/Fetch | ✅          |
+| Date Picker     | ✅          |
+| Search          | ✅          |
+| Preview (Img/PDF)| ✅         |
+| Download (Share)| ✅          |
+| Responsive UI   | ✅          |
+| README          | ✅          |
+| (ZIP Download)  | Not implemented (bonus)* |
+
